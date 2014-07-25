@@ -71,7 +71,7 @@ def apply_rules(cparser, db, dryrun=False):
                     counter += 1
             else:
                 logging.debug('{header} did not match re: {re}'.format(
-                    header=header, re=hcontents.re.pattern))
+                    header=header, re=hcontents.pattern))
     return counter
 
 
