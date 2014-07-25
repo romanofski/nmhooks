@@ -2,7 +2,6 @@ import pytest
 import notmuch
 import nmhooks.commandline
 import io
-import os
 
 
 @pytest.fixture
@@ -46,3 +45,11 @@ def test_does_not_remove_existing_tags(config, db):
 
     nmhooks.commandline.apply_rules(cparser, db)
     assert 'hurz test' == str(query.search_messages().collect_tags())
+
+
+def test_dryrun_does_not_change_messages(config, db):
+    cparser = nmhooks.commandline.parse_rules(config)
+    nmhooks.commandline.apply_rules(cparser, db, True)
+
+    msgs = notmuch.Query(db, '').search_messages()
+    assert '' == str(msgs.collect_tags())

@@ -39,7 +39,7 @@ def construct_tag_mapping(tags):
     return filter(lambda x: x[1] is not None, tags)
 
 
-def apply_rules(cparser, db):
+def apply_rules(cparser, db, dryrun=False):
     """
     Applies rules defined by the configfile parsed by cparser to the
     messages in the db.
@@ -64,10 +64,11 @@ def apply_rules(cparser, db):
             if hcontents.search(header):
                 msg.freeze()
                 [getattr(msg, attr)(tag) for tag, attr in tag_mapping]
-                logging.info('Applied {0} on {1}'.format(
-                    cparser.get(section, 'apply'), msg))
-                msg.thaw()
-                counter += 1
+                if not dryrun:
+                    logging.info('Applied {0} on {1}'.format(
+                        cparser.get(section, 'apply'), msg))
+                    msg.thaw()
+                    counter += 1
             else:
                 logging.debug('{header} did not match re: {re}'.format(
                     header=header, re=hcontents.re.pattern))
@@ -91,6 +92,12 @@ def _setup_commandline_arguments():
         help=("Increase logging verbosity to DEBUG"),
         action="store_true")
     parser.add_argument(
+        "-d",
+        "--dry-run",
+        dest='dryrun',
+        help=("Don't make any changes to the messages."),
+        action="store_true")
+    parser.add_argument(
         "--version",
         action="version",
         version="{name} {version}".format(
@@ -104,7 +111,7 @@ def postnew():
     db = notmuch.Database(mode=notmuch.Database.MODE.READ_WRITE)
     with open(options.configfile, 'r') as f:
         cparser = parse_rules(f)
-    msg_count = apply_rules(cparser, db)
+    msg_count = apply_rules(cparser, db, options.dryrun)
     end = time.time()
     logging.info('Changed {msgcount} in {proctime} seconds'.format(
         msgcount=msg_count, proctime=end - start))
