@@ -1,14 +1,19 @@
 #!/usr/bin/env python
+import ConfigParser
+import argparse
+import logging
+import nmhooks
 import notmuch
 import re
-import logging
-import argparse
-import ConfigParser
+import sys
 import time
-import nmhooks
 
 
-logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(nmhooks.__name__)
+stdout = logging.StreamHandler(sys.stdout)
+stdout.setFormatter(logging.Formatter())
+logger.addHandler(stdout)
+logger.setLevel(logging.INFO)
 
 
 def parse_rules(fp):
@@ -51,13 +56,13 @@ def apply_rules(cparser, db, dryrun=False):
         query = construct_query(db, cparser.get(section, 'query'))
         hcontents = re.compile(cparser.get(section, 'match'))
         tag_mapping = construct_tag_mapping(cparser.get(section, 'apply'))
-        logging.info("Found {0} mails for query: {1}".format(
+        logger.info("Found {0} mails for query: {1}".format(
             query.count_messages(), cparser.get(section, 'query')))
 
         for msg in query.search_messages():
             header = msg.get_header(cparser.get(section, 'header'))
             if not header:
-                logging.debug('Header `{header}` not found on: {msg}'.format(
+                logger.debug('Header `{header}` not found on: {msg}'.format(
                     header=cparser.get(section, 'header'), msg=msg))
                 continue
 
@@ -65,12 +70,12 @@ def apply_rules(cparser, db, dryrun=False):
                 msg.freeze()
                 [getattr(msg, attr)(tag) for tag, attr in tag_mapping]
                 if not dryrun:
-                    logging.info('Applied {0} on {1}'.format(
+                    logger.info('Applied {0} on {1}'.format(
                         cparser.get(section, 'apply'), msg))
                     msg.thaw()
                     counter += 1
             else:
-                logging.debug('{header} did not match re: {re}'.format(
+                logger.debug('{header} did not match re: {re}'.format(
                     header=header, re=hcontents.pattern))
     return counter
 
@@ -107,11 +112,13 @@ def _setup_commandline_arguments():
 
 def postnew():
     options = _setup_commandline_arguments()
+    if options.verbose:
+        logger.setLevel(logging.DEBUG)
     start = time.time()
     db = notmuch.Database(mode=notmuch.Database.MODE.READ_WRITE)
     with open(options.configfile, 'r') as f:
         cparser = parse_rules(f)
     msg_count = apply_rules(cparser, db, options.dryrun)
     end = time.time()
-    logging.info('Changed {msgcount} in {proctime} seconds'.format(
+    logger.info('Changed {msgcount} in {proctime} seconds'.format(
         msgcount=msg_count, proctime=end - start))
