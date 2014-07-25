@@ -1,0 +1,28 @@
+Return-Path: mranon@bar.com
+Received: from mailserver.bar.com (LHLO
+ mailserver.bar.com) (10.5.81.13) by
+ mailserver.bar.com with LMTP; Thu, 24 Jul 2014
+ 23:23:06 -0400 (EDT)
+Message-ID: <53D1CD95.3030308@bar.com>
+Date: Fri, 25 Jul 2014 13:23:01 +1000
+From: mranon@bar.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
+MIME-Version: 1.0
+To: Receiver <receiver@bar.com>
+CC: <myself@bar.com>,
+Subject: Re: This is a test
+X-Enigmail-Version: 1.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.68 on 10.5.11.24
+X-Product: nmhooks
+
+This is the message body.
+
+
+On 24/07/14 19:33, Mr Anonymous wrote:
+> Quoted text
+
+
+-- 
+Mysignature
