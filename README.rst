@@ -1,3 +1,4 @@
+=============
 notmuch hooks
 =============
 
@@ -19,7 +20,7 @@ offlineimap postsync script and call nmhooks from there for further
 tagging).
 
 The configuration file follows a typical .ini type syntax. Here's an
-example:
+example::
 
     [GIMP Bugs]
     query = tag:inbox and from:bugzilla
@@ -45,8 +46,13 @@ example:
 Development
 -----------
 
-All you (should) need is:
+All you (should) need is::
 
     python2.7 bootstrap.py
     bin/buildout
     bin/test
+
+License
+-------
+
+GPL

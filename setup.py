@@ -11,7 +11,7 @@ setup(
     name=__name__,
     version=__version__,
     description=__description__,
-    long_description=open("README.md").read(),
+    long_description=open("README.rst").read(),
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License (GPL)",
